@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { API_URL } from "src/globals";
+import { API_URL } from "src/common/globals";
 import { Project } from "../common/entities";
 import Layout from "../components/Layout";
 import ProjectsList from "../components/ProjectList";
