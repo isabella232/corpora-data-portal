@@ -5,6 +5,11 @@ import Layout from "../components/Layout";
 import ProjectsList from "../components/ProjectList";
 import SEO from "../components/seo";
 
+// DEBUG
+// DEBUG
+// DEBUG
+console.log("--------------> API_URL", API_URL);
+
 const Index: FC = () => {
   const [projects, setProjects] = useState<Project[] | null>(null);
 
