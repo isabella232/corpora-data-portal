@@ -5,9 +5,9 @@ from datetime import datetime
 from furl import furl
 
 from backend.corpora.common.corpora_orm import ProjectStatus
-from backend.corpora.common.entities import Project
+from backend.corpora.common.entities import Project, Dataset
 from tests.unit.backend.chalice.api_server import BaseAPITest
-from tests.unit.backend.utils import BogusProjectParams
+from tests.unit.backend.utils import BogusProjectParams, BogusDatasetParams
 
 
 class TestProject(BaseAPITest, unittest.TestCase):
@@ -142,3 +142,91 @@ class TestProject(BaseAPITest, unittest.TestCase):
         response = self.app.get(test_url.url, headers=dict(host="localhost"))
         self.assertEqual(403, response.status_code)
         self.assertIn("X-AWS-REQUEST-ID", response.headers.keys())
+
+    def test__delete_project_uuid__ok(self):
+        expected_name = "test__delete_project_uuid__ok"
+        test_project = Project.create(**BogusProjectParams.get(name=expected_name, status=ProjectStatus.LIVE.name))
+
+        # check if it exists
+        test_url = furl(path=f"/v1/project/{test_project.id}")
+        response = self.app.get(test_url.url, headers=dict(host="localhost"))
+        response.raise_for_status()
+
+        # delete
+        test_url = furl(path=f"/v1/project/{test_project.id}")
+        response = self.app.delete(test_url.url, headers=dict(host="localhost"))
+        response.raise_for_status()
+
+        # check if deleted
+        test_url = furl(path=f"/v1/project/{test_project.id}")
+        response = self.app.get(test_url.url, headers=dict(host="localhost"))
+        self.assertEqual(403, response.status_code)
+
+    def test__delete_project_uuid__403_not_found(self):
+        """Verify the test project exists and the expected fields exist."""
+        test_url = furl(path="/v1/project/AAAA-BBBB-CCCC-DDDD")
+        response = self.app.delete(test_url.url, headers=dict(host="localhost"))
+        self.assertEqual(403, response.status_code)
+
+
+class TestProjectDataset(BaseAPITest, unittest.TestCase):
+    def test__delete_dataset__ok(self):
+        test_project = Project.create(**BogusProjectParams.get(status=ProjectStatus.EDIT.name))
+        test_dataset = Dataset.create(
+            **BogusDatasetParams.get(project_id=test_project.id, project_status=test_project.status)
+        )
+        expected_dataset_id = test_dataset.id
+
+        # Verify Dataset Exists
+        submission_url = furl(path=f"/v1/submission/{test_project.id}")
+        resp = self.app.get(submission_url.url, headers=dict(host="localhost"))
+        resp_json = json.loads(resp.body)
+
+        actual_dataset_ids = [dataset["id"] for dataset in resp_json["datasets"]]
+        self.assertIn(expected_dataset_id, actual_dataset_ids)
+
+        # Delete the dataset
+        dataset_url = furl(path=f"/v1/submission/{test_project.id}/dataset/{expected_dataset_id}")
+        resp = self.app.delete(dataset_url.url, headers=dict(host="localhost"))
+        self.assertEqual(202, resp.status_code)
+
+        # Verify Dataset Deleted
+        resp = self.app.get(submission_url.url, headers=dict(host="localhost"))
+        resp_json = json.loads(resp.body)
+        expected_dataset_id = test_dataset.id
+        actual_dataset_ids = [dataset["id"] for dataset in resp_json["datasets"]]
+        self.assertNotIn(expected_dataset_id, actual_dataset_ids)
+
+    def test__delete_dataset__403_not_found(self):
+        # Delete the dataset
+        dataset_url = furl(path=f"/v1/submission/test_project_id/dataset/AAAA-BBBB-CCCC-DDDD")
+        resp = self.app.delete(dataset_url.url, headers=dict(host="localhost"))
+        self.assertEqual(403, resp.status_code)
+
+    def test__delete_dataset__403_not_in_project(self):
+        test_project = Project.create(**BogusProjectParams.get(status=ProjectStatus.EDIT.name))
+        test_dataset = Dataset.create(
+            **BogusDatasetParams.get(project_id=test_project.id, project_status=test_project.status)
+        )
+        expected_dataset_id = test_dataset.id
+
+        # Verify Dataset Exists
+        submission_url = furl(path=f"/v1/submission/{test_project.id}")
+        resp = self.app.get(submission_url.url, headers=dict(host="localhost"))
+        resp_json = json.loads(resp.body)
+
+        actual_dataset_ids = [dataset["id"] for dataset in resp_json["datasets"]]
+        self.assertIn(expected_dataset_id, actual_dataset_ids)
+
+        # Delete the dataset
+        dataset_url = furl(path=f"/v1/submission/test_project_id/dataset/{expected_dataset_id}")
+        resp = self.app.delete(dataset_url.url, headers=dict(host="localhost"))
+        self.assertEqual(403, resp.status_code)
+
+        # Verify Dataset Exists
+        submission_url = furl(path=f"/v1/submission/{test_project.id}")
+        resp = self.app.get(submission_url.url, headers=dict(host="localhost"))
+        resp_json = json.loads(resp.body)
+
+        actual_dataset_ids = [dataset["id"] for dataset in resp_json["datasets"]]
+        self.assertIn(expected_dataset_id, actual_dataset_ids)

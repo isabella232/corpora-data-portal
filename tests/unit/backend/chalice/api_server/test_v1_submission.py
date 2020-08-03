@@ -60,3 +60,28 @@ class TestSubmission(BaseAPITest, unittest.TestCase):
         test_url = furl(path="/v1/submission/AAAA-BBBB-CCCC-DDDD")
         response = self.app.get(test_url.url, headers=dict(host="localhost"))
         self.assertEqual(403, response.status_code)
+
+    def test__delete_submission_uuid__ok(self):
+        expected_name = "test__delete_submission_uuid__ok"
+        test_project = Project.create(**BogusProjectParams.get(name=expected_name, status=ProjectStatus.EDIT.name))
+
+        # check if it exists
+        test_url = furl(path=f"/v1/submission/{test_project.id}")
+        response = self.app.get(test_url.url, headers=dict(host="localhost"))
+        response.raise_for_status()
+
+        # delete
+        test_url = furl(path=f"/v1/submission/{test_project.id}")
+        response = self.app.delete(test_url.url, headers=dict(host="localhost"))
+        response.raise_for_status()
+
+        # check if deleted
+        test_url = furl(path=f"/v1/submission/{test_project.id}")
+        response = self.app.get(test_url.url, headers=dict(host="localhost"))
+        self.assertEqual(403, response.status_code)
+
+    def test__delete_submission_uuid__403_not_found(self):
+        """Verify the test project exists and the expected fields exist."""
+        test_url = furl(path="/v1/submission/AAAA-BBBB-CCCC-DDDD")
+        response = self.app.delete(test_url.url, headers=dict(host="localhost"))
+        self.assertEqual(403, response.status_code)
