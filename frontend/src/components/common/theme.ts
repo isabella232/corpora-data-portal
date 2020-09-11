@@ -7,3 +7,10 @@ export const fontStyle = css`
 `;
 
 export const BLUE = "#0076dc";
+
+export enum GREY {
+  DARK = "#868686",
+  LIGHT = "#f9f9fa",
+  BORDER_LIGHT = "#f3f2f4",
+  TIPS = "#686868",
+}
