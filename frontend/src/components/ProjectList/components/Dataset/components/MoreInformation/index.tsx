@@ -23,14 +23,22 @@ const MoreInformation: FC<Props> = ({ links }) => {
     new Map(links.map((link) => [link.url, link.name]))
   );
 
-  const styledLinks = uniqueLinks.map((link) => {
+  const styledLinks = uniqueLinks.map((link, index) => {
     const [url, name] = link;
 
-    return (
-      <div key={url}>
-        <Anchor url={url}>{name}</Anchor>
-      </div>
-    );
+    if (index === uniqueLinks.length - 1) {
+      return (
+        <div key={url}>
+          <Anchor url={url}>{name}</Anchor>
+        </div>
+      );
+    } else {
+      return (
+        <div key={url}>
+          <Anchor url={url}>{name},&nbsp;</Anchor>
+        </div>
+      );
+    }
   });
 
   return (
