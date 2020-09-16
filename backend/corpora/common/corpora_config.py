@@ -4,7 +4,8 @@ from .utils.secret_config import SecretConfig
 
 
 class CorporaConfig(SecretConfig):
-    using_gevent = False
+    using_gevent = True if "PSYCOGREEN" in os.environ else False
+
     def __init__(self, *args, **kwargs):
         super().__init__("corpora/corpora", **kwargs)
 

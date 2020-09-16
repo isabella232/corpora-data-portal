@@ -6,6 +6,12 @@ import sys
 from collections import defaultdict
 from functools import wraps
 
+if "PSYCOGREEN" in os.environ:
+    from gevent.monkey import patch_all
+    patch_all()
+    from psycogreen.gevent import patch_psycopg
+    patch_psycopg()
+
 import chalice
 import connexion
 from chalice import Chalice, CORSConfig
@@ -19,16 +25,8 @@ from corpora.common.utils.json import CustomJSONEncoder
 from corpora.common.utils.aws_secret import AwsSecret
 from corpora.common.corpora_config import CorporaAuthConfig, CorporaConfig
 
+
 cors_config = CORSConfig(allow_origin="*", max_age=600, allow_credentials=True)
-
-
-if "PSYCOGREEN" in os.environ:
-    from gevent.monkey import patch_all
-    patch_all()
-    from psycogreen.gevent import patch_psycopg
-    patch_psycopg()
-
-    CorporaConfig.using_gevent = True
 
 def requires_auth():
     """
