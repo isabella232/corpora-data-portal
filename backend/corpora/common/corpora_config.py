@@ -4,6 +4,7 @@ from .utils.secret_config import SecretConfig
 
 
 class CorporaConfig(SecretConfig):
+    using_gevent = False
     def __init__(self, *args, **kwargs):
         super().__init__("corpora/corpora", **kwargs)
 

@@ -21,7 +21,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 pkg_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))  # noqa
 sys.path.insert(0, pkg_root)  # noqa
 
-from .corpora_config import CorporaDbConfig
+from .corpora_config import CorporaDbConfig, CorporaConfig
 from .utils.exceptions import CorporaException
 
 
@@ -68,6 +68,15 @@ class DBSessionMaker:
     def __init__(self):
         self.engine = create_engine(CorporaDbConfig().database_uri, connect_args={"connect_timeout": 5})
         self.session_maker = sessionmaker(bind=self.engine)
+        if CorporaConfig.using_gevent:
+            # Assuming that gevent monkey patched the builtin
+            # threading library, we're likely good to use
+            # SQLAlchemy's QueuePool, which is the default
+            # pool class.  However, we need to make it use
+            # threadlocal connections
+            #
+            #
+            self.engine.pool._use_threadlocal = True
 
     def session(self, **kwargs):
         return self.session_maker(**kwargs)

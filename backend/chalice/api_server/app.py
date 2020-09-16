@@ -17,10 +17,18 @@ sys.path.insert(0, pkg_root)  # noqa
 from corpora.common.authorizer import assert_authorized_token
 from corpora.common.utils.json import CustomJSONEncoder
 from corpora.common.utils.aws_secret import AwsSecret
-from corpora.common.corpora_config import CorporaAuthConfig
+from corpora.common.corpora_config import CorporaAuthConfig, CorporaConfig
 
 cors_config = CORSConfig(allow_origin="*", max_age=600, allow_credentials=True)
 
+
+if "PSYCOGREEN" in os.environ:
+    from gevent.monkey import patch_all
+    patch_all()
+    from psycogreen.gevent import patch_psycopg
+    patch_psycopg()
+
+    CorporaConfig.using_gevent = True
 
 def requires_auth():
     """
