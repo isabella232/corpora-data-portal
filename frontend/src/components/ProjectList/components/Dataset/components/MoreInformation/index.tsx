@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Project } from "src/common/entities";
 import { SmallColumn } from "../../common/style";
-import { StyledAnchor } from "./style";
+import { StyledAnchor, Wrapper } from "./style";
 interface AnchorProps {
   url: string;
 }
@@ -23,25 +23,21 @@ const MoreInformation: FC<Props> = ({ links }) => {
     new Map(links.map((link) => [link.url, link.name]))
   );
 
-  const styledLinks = uniqueLinks.map((link, index) => {
+  const styledLinks = uniqueLinks.map((link) => {
     const [url, name] = link;
 
-    if (index === uniqueLinks.length - 1) {
-      return (
-        <Anchor key={url} url={url}>
-          {name}
-        </Anchor>
-      );
-    } else {
-      return (
-        <Anchor key={url} url={url}>
-          {name},&nbsp;
-        </Anchor>
-      );
-    }
+    return (
+      <div key={url}>
+        <Anchor url={url}>{name}</Anchor>
+      </div>
+    );
   });
 
-  return <SmallColumn>{styledLinks}</SmallColumn>;
+  return (
+    <SmallColumn>
+      <Wrapper>{styledLinks}</Wrapper>
+    </SmallColumn>
+  );
 };
 
 export default MoreInformation;
