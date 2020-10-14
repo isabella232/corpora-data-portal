@@ -1,9 +1,10 @@
 from datetime import datetime
 from typing import List
+import os
 
 import boto3
 
-cloudfront_client = boto3.client("cloudfront")
+cloudfront_client = boto3.client("cloudfront", endpoint_url=os.getenv("BOTO_ENDPOINT_URI"))
 
 
 def get_cloudfront_distribution(bucket_name: str) -> List[str]:

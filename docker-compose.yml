@@ -1,0 +1,27 @@
+version: '2.1'
+
+services:
+  database:
+    image: postgres
+    network_mode: bridge
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=corpora
+      - POSTGRES_PASSWORD=test_pw
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - ./.devenv/postgres:/var/lib/postgresql/data
+  localstack:
+    image: localstack/localstack
+    network_mode: bridge
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3,secretsmanager
+      - DEBUG=${DEBUG- }
+      - DATA_DIR=/tmp/localstack/data
+      - PORT_WEB_UI=${PORT_WEB_UI- }
+      - HOST_TMP_FOLDER=${TMPDIR}
+    volumes:
+      - ./.devenv/localstack:/tmp/localstack

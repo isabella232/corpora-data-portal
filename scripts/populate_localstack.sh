@@ -1,0 +1,2 @@
+aws --endpoint-url=http://localhost:4566 secretsmanager create-secret --name corpora/backend/dev/auth0-secret --secret-string '{"client_id":"xxx","client_secret":"yyy","audience":"https://localhost:5000","grant_type":"client_credentials"}' || true
+aws --endpoint-url=http://localhost:4566 secretsmanager create-secret --name corpora/backend/dev/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@localhost:5432"}' || true
