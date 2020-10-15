@@ -1,10 +1,11 @@
 # Chalice dockerfile
-FROM ubuntu:bionic
+FROM ubuntu:focal
 
 ENV APP_NAME=corpora-api
 ENV DEPLOYMENT_STAGE=dev
 ENV EXPORT_ENV_VARS_TO_LAMBDA="APP_NAME DEPLOYMENT_STAGE"
 ENV LC_ALL=C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
 
 ADD chalice/api_server /chalice
 WORKDIR /chalice
