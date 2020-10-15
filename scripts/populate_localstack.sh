@@ -10,4 +10,6 @@ aws --endpoint-url=http://localhost:4566 secretsmanager update-secret --secret-i
 
 export CORPORA_LOCAL_DEV=true
 export BOTO_ENDPOINT_URL=http://localhost:4566
+export AWS_ACCESS_KEY_ID=nonce
+export AWS_SECRET_ACCESS_KEY=nonce
 python3 $(dirname ${BASH_SOURCE[0]})/populate_db.py
