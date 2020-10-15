@@ -23,7 +23,18 @@ services:
       - HOST_TMP_FOLDER=${TMPDIR}
     volumes:
       - ./.devenv/localstack:/tmp/localstack
-  corpora:
+  frontend:
+    image: corpora-frontend
+    build: frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "8000:8000"
+    command: ["npm", "run", "develop"]
+    volumes:
+      - ./frontend:/corpora-frontend
+  backend:
     image: corpora
     build: backend
     restart: always
