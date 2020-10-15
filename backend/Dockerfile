@@ -19,7 +19,6 @@ RUN rm -rf __pycache__ vendor chalicelib/config chalicelib/corpora .chalice/venv
 RUN mv .chalice/config.json.dev .chalice/config.json
 # RUN envsubst < config/iam-policy-templates/corpora-api-lambda.json > .chalice/policy-$(DEPLOYMENT_STAGE).json
 
-
 RUN mkdir -p chalicelib config vendor
 ADD corpora chalicelib/corpora
 ADD config/corpora-api.yml chalicelib/config/corpora-api.yml
