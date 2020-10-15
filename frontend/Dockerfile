@@ -15,7 +15,5 @@ COPY package.json package-lock.json* ./
 RUN npm install --no-optional && npm cache clean --force
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 
-ADD . /corpora-frontend
+ADD --chown=node . /corpora-frontend
 WORKDIR /corpora-frontend
-
-RUN npm install
