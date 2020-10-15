@@ -31,9 +31,10 @@ services:
       - backend
     ports:
       - "8000:8000"
-    command: ["npm", "run", "develop"]
+    command: ["./container_init.sh"]
     volumes:
       - ./frontend:/corpora-frontend
+      - /corpora-frontend/node_modules/
   backend:
     image: corpora
     build: backend

@@ -10,10 +10,16 @@ WORKDIR /opt/node_app
 # but we have to manually enable it. We put it here so npm installs dependencies as the same
 # user who runs the app. 
 # https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#non-root-user
-USER node
+
+
+# -- TODO, we should try turning this back on later.
+# USER node
 COPY package.json package-lock.json* ./
 RUN npm install --no-optional && npm cache clean --force
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 
-ADD --chown=node . /corpora-frontend
+# -- TODO, we should try turning this back on later.
+# ADD --chown=node . /corpora-frontend
+ADD . /corpora-frontend
 WORKDIR /corpora-frontend
+CMD ["./container_init.sh"]
