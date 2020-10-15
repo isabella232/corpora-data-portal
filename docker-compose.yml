@@ -3,7 +3,6 @@ version: '2.1'
 services:
   database:
     image: postgres
-    network_mode: bridge
     ports:
       - "5432:5432"
     environment:
@@ -14,7 +13,6 @@ services:
       - ./.devenv/postgres:/var/lib/postgresql/data
   localstack:
     image: localstack/localstack
-    network_mode: bridge
     ports:
       - "4566:4566"
     environment:
@@ -25,3 +23,24 @@ services:
       - HOST_TMP_FOLDER=${TMPDIR}
     volumes:
       - ./.devenv/localstack:/tmp/localstack
+  corpora:
+    image: corpora
+    build: backend
+    restart: always
+    depends_on:
+      - localstack
+      - database
+    ports:
+      - "5000:5000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CORPORA_LOCAL_DEV=true
+      - AWS_ACCESS_KEY_ID=dev_access_key_id
+      - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
+      - BOTO_ENDPOINT_URL=http://localstack:4566
+      - DEPLOYMENT_STAGE=dev
+    volumes:
+      - ./backend/chalice/api_server/app.py:/chalice/app.py
+      - ./backend/chalice/api_server/run_local_server.py:/chalice/run_local_server.py
+      - ./backend/corpora:/chalice/chalicelib/corpora
+      - ./backend/config/corpora-api.yml:/chalice/chalicelib/config/corpora-api.yml

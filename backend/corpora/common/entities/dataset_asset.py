@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class DatasetAsset(Entity):
     table = DbDatasetArtifact
-    s3 = boto3.client("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URI"))
+    s3 = boto3.client("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"))
 
     def __init__(self, db_object: DbDatasetArtifact):
         super().__init__(db_object)
