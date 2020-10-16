@@ -22,4 +22,5 @@ ENV PATH /opt/node_app/node_modules/.bin:$PATH
 # ADD --chown=node . /corpora-frontend
 ADD . /corpora-frontend
 WORKDIR /corpora-frontend
+RUN mv src/configs/local.js src/configs/configs.js
 CMD ["./container_init.sh"]
