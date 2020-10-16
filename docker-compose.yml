@@ -36,7 +36,7 @@ services:
       - ./frontend:/corpora-frontend
       - /corpora-frontend/node_modules/
   backend:
-    image: corpora
+    image: corpora-backend
     build: backend
     restart: always
     depends_on:
