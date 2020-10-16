@@ -51,9 +51,11 @@ services:
       - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
       - BOTO_ENDPOINT_URL=http://localstack:4566
       - DEPLOYMENT_STAGE=dev
-    command: ["python3", "run_local_server.py", "--host", "0.0.0.0"]
+    #command: ["python3", "run_local_server.py", "--host", "0.0.0.0"]
+    command: ["python3", "/chalice/run_dev_server.py", "--host", "0.0.0.0"]
     volumes:
-      - ./backend/chalice/api_server/app.py:/chalice/app.py
-      - ./backend/chalice/api_server/run_local_server.py:/chalice/run_local_server.py
+      - ./backend/chalice/api_server:/chalice
       - ./backend/corpora:/chalice/chalicelib/corpora
-      - ./backend/config/corpora-api.yml:/chalice/chalicelib/config/corpora-api.yml
+      - ./backend/config:/chalice/chalicelib/config
+      # TODO - avoid file mounts where possible!
+      - ./backend/chalice/api_server/.chalice/config.json.dev:/chalice/.chalice/config.json
