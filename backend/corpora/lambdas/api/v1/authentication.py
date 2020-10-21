@@ -41,6 +41,7 @@ def get_oauth_client(config: CorporaAuthConfig) -> FlaskRemoteApp:
         refresh_token_url=f"{api_base_url}/connect/token",
         access_token_url=f"{api_base_url}/connect/token",
         authorize_url=f"{api_base_url}/connect/authorize",
+        #authorize_url=f"http://localhost:5000/v1/dp/userinfo",
         client_kwargs={"scope": "openid profile email"},
     )
     return oauth_client
@@ -50,7 +51,8 @@ def login() -> Response:
     """API call: initiate the login process."""
     config = CorporaAuthConfig()
     client = get_oauth_client(config)
-    callbackurl = f"{config.callback_base_url}/dp/v1/oauth2/callback"
+    #callbackurl = f"{config.callback_base_url}/dp/v1/oauth2/callback"
+    callbackurl = f"http://localhost:5000/dp/v1/oauth2/callback"
     response = client.authorize_redirect(redirect_uri=callbackurl, code_challenge="dev-client-secret")
     return response
 

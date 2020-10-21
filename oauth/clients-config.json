@@ -4,23 +4,19 @@
           "dev-client-secret"
         ],
         "Description": "Client for client credentials flow",
+	"AllowAccessTokensViaBrowser": true,
         "AllowedGrantTypes": [
-            "client_credentials",
-            "authorization_code",
-            "refresh_token"
+            "authorization_code"
         ],
         "RedirectUris": [
-            "https://localhost:5000/dp/v1/oauth2/callback"
+            "https://localhost:5000/dp/v1/oauth2/callback",
+            "http://localhost:5000/dp/v1/oauth2/callback"
         ],
         "AllowedScopes": [
-           "openid", "profile", "email", "offline_access"
+           "corpora", "openid", "profile", "email", "offline_access"
         ],
         "ClientClaimsPrefix": "",
         "Claims": [
-            {
-                "Type": "string_claim",
-                "Value": "string_claim_value"
-            },
             {
                 "Type": "json_claim",
                 "Value": "['value1', 'value2']",
