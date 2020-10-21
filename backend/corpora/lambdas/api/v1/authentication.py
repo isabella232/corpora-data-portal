@@ -34,13 +34,14 @@ def get_oauth_client(config: CorporaAuthConfig) -> FlaskRemoteApp:
     api_base_url = config.api_base_url
     oauth_client = oauth.register(
         "oauth",
+        code_challenge_method='S256',
         client_id=config.client_id,
         client_secret=config.client_secret,
         api_base_url=api_base_url,
-        refresh_token_url=f"{api_base_url}/oauth/token",
-        access_token_url=f"{api_base_url}/oauth/token",
-        authorize_url=f"{api_base_url}/authorize",
-        client_kwargs={"scope": "openid profile email offline_access"},
+        refresh_token_url=f"{api_base_url}/connect/token",
+        access_token_url=f"{api_base_url}/connect/token",
+        authorize_url=f"{api_base_url}/connect/authorize",
+        client_kwargs={"scope": "openid profile email"},
     )
     return oauth_client
 
@@ -50,7 +51,7 @@ def login() -> Response:
     config = CorporaAuthConfig()
     client = get_oauth_client(config)
     callbackurl = f"{config.callback_base_url}/dp/v1/oauth2/callback"
-    response = client.authorize_redirect(redirect_uri=callbackurl)
+    response = client.authorize_redirect(redirect_uri=callbackurl, code_challenge="dev-client-secret")
     return response
 
 
