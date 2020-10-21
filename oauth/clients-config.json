@@ -4,7 +4,6 @@
           "dev-client-secret"
         ],
         "Description": "Client for client credentials flow",
-	"AllowAccessTokensViaBrowser": true,
         "AllowedGrantTypes": [
             "authorization_code"
         ],
@@ -13,9 +12,13 @@
             "http://localhost:5000/dp/v1/oauth2/callback"
         ],
         "AllowedScopes": [
-           "corpora", "openid", "profile", "email", "offline_access"
+           "openid", "profile", "email", "offline_access"
         ],
+	"AllowAccessTokensViaBrowser": true,
+	"IdentityTokenLifetime": 3600,
+        "AccessTokenLifetime": 3600,
         "ClientClaimsPrefix": "",
+	"RequirePkce": false,
         "Claims": [
             {
                 "Type": "json_claim",

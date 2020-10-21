@@ -3,6 +3,7 @@
     "SubjectId":"1",
     "Username":"User1",
     "Password":"pwd",
+    "IsActive":true,
     "Claims": [
       {
         "Type": "name",

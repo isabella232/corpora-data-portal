@@ -1,6 +1,6 @@
 [
   {
     "Name": "corpora",
-    "Scopes": ["offline_access", "profile", "email", "openid", "corpora"]
+    "Scopes": ["test_scope"]
   }
 ]
