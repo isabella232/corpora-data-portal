@@ -31,17 +31,18 @@ def get_oauth_client(config: CorporaAuthConfig) -> FlaskRemoteApp:
         return oauth_client
 
     oauth = OAuth(current_app)
+    api_authorize_url = config.api_authorize_url
     api_base_url = config.api_base_url
+    api_token_url = config.api_token_url
     oauth_client = oauth.register(
         "oauth",
         code_challenge_method='S256',
         client_id=config.client_id,
         client_secret=config.client_secret,
         api_base_url=api_base_url,
-        refresh_token_url=f"http://oidc-server-mock/connect/token",
-        access_token_url=f"http://oidc-server-mock/connect/token",
-        authorize_url=f"{api_base_url}/connect/authorize",
-        #authorize_url=f"http://localhost:5000/v1/dp/userinfo",
+        refresh_token_url=api_token_url,
+        access_token_url=api_token_url,
+        authorize_url=api_authorize_url,
         client_kwargs={"scope": "openid profile email"},
     )
     return oauth_client
@@ -51,8 +52,7 @@ def login() -> Response:
     """API call: initiate the login process."""
     config = CorporaAuthConfig()
     client = get_oauth_client(config)
-    #callbackurl = f"{config.callback_base_url}/dp/v1/oauth2/callback"
-    callbackurl = f"http://localhost:5000/dp/v1/oauth2/callback"
+    callbackurl = f"{config.callback_base_url}/dp/v1/oauth2/callback"
     response = client.authorize_redirect(redirect_uri=callbackurl, code_challenge="dev-client-secret")
     return response
 
@@ -204,7 +204,7 @@ def refresh_expired_token(token: dict) -> Optional[dict]:
         "client_secret": auth_config.client_secret,
     }
     headers = {"content-type": "application/x-www-form-urlencoded"}
-    request = requests.post(f"{auth_config.api_base_url}/oauth/token", urlencode(params), headers=headers)
+    request = requests.post(f"{auth_config.api_base_url}/oauth/token", urlencode(params), headers=headers)  # TODO unhardcode
     if request.status_code != 200:
         # unable to refresh the token
         return None

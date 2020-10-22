@@ -29,6 +29,8 @@ class TestAuthorizer(unittest.TestCase):
         config.set(
             dict(
                 api_base_url="https://czi-single-cell.auth0.com",
+                api_authorize_url="https://czi-single-cell.auth0.com/authorize",
+                api_token_url="https://czi-single-cell.auth0.com/oauth/token"
                 audience=cls.auth0_secret["audience"],
                 client_id=cls.auth0_secret["client_id"],
             )

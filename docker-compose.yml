@@ -60,8 +60,7 @@ services:
       - ./backend/config:/chalice/chalicelib/config
       # TODO - avoid file mounts where possible!
       - ./backend/chalice/api_server/.chalice/config.json.dev:/chalice/.chalice/config.json
-  oidc-server-mock:
-    container_name: oidc-server-mock
+  oidc:
     image: soluto/oidc-server-mock
     ports:
       - "4011:80"
