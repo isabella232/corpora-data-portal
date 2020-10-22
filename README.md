@@ -67,3 +67,28 @@ well-labeled repository of interoperable datasets.
 1. Run `make local-database` to setup and populate a locally hosted database.
 1. Run `make local-backend` to setup the api on a locally.
 1. In another terminal run `make functional-test`
+
+### Running a local development environment using docker-compose (EXPERIMENTAL)
+There is an experimental setup to run a self-contained CDP locally using
+docker-compose. It sets up a local database, a mock AWS service via
+[https://github.com/localstack/localstack](LocalStack), and a mock
+[https://github.com/Soluto/oidc-server-mock](authentication service)
+in place of Auth0.
+
+1. `docker-compose up localstack`
+1. `scripts/populate_localstack.sh` - This currently requires boto3 installed in your local pip. TODO containerize this
+1. `docker-compose up`
+
+After this initial setup, you can simply run docker-compose up.
+
+#### TLS Certificate for mock authentication service
+Due to browser security considerations, we must run the mock authentication
+service using a self-signed certificate.
+`sudo security add-trusted-cert -d -p ssl -k /Library/Keychains/System.keychain oauth/pkcs12/server.crt`
+
+(Details: OIDC requires setting a token, and requires the cookie storing that
+token to be stored with samesite=None to work properly. Recent versions of
+browsers such as Chrome intentionally only allow samesite=None if the connection
+is over a secure network connection i.e. TLS. Thus we need to run even a local
+development auth service behind a certificate. We bundle a pre-generated
+self-signed cert in for convenience.)
