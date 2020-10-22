@@ -8,7 +8,8 @@ aws --endpoint-url=http://localhost:4566 secretsmanager create-secret --name cor
 aws --endpoint-url=http://localhost:4566 secretsmanager create-secret --name corpora/backend/dev/database_local || true
 aws --endpoint-url=http://localhost:4566 secretsmanager create-secret --name corpora/backend/test/database_local || true
 
-echo test-h5ad-file > fake-h5ad-file.h5ad
+# Make a 1mb data file
+dd if=/dev/zero of=fake-h5ad-file.h5ad bs=1024 count=1024
 aws --endpoint-url=http://localhost:4566 s3 cp fake-h5ad-file.h5ad s3://corpora-data-dev/
 rm fake-h5ad-file.h5ad
 
