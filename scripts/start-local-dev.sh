@@ -7,3 +7,4 @@ until $(curl --output /dev/null --silent --head http://localhost:4566); do
 done
 echo " done"
 $(dirname ${BASH_SOURCE[0]})/populate_localstack.sh
+docker-compose restart backend
