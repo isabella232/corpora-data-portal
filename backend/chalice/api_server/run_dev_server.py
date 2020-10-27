@@ -9,6 +9,7 @@ import functools
 import logging
 import os
 import sys
+import time
 
 from chalice.deploy.validate import validate_routes
 from chalice.cli import CLIFactory, reloader
@@ -64,4 +65,14 @@ def create_local_server(factory, config, app, host, port, stage):
 
 if __name__ == "__main__":
     args, stage = get_args()
-    run_server(args, stage)
+    if os.getenv("RESTART_ON_FAILURE"):
+        while True:
+            try:
+                run_server(args, stage)
+            except Exception as err:
+                logging.exception(err)
+                time.sleep(1)
+    else:
+        run_server(args, stage)
+
+

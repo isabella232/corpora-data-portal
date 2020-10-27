@@ -58,7 +58,7 @@ smoke-test-with-local-backend-ci:
 .PHONY: dev-init
 dev-init:
 	docker-compose up -d
-	docker-compose exec backend pip3 install awscli || true
+	docker-compose exec backend pip3 install awscli
 	docker-compose exec backend /corpora-data-portal/scripts/populate_localstack.sh
 
 .PHONY: dev-status
