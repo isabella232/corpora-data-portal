@@ -60,6 +60,7 @@ services:
       - ./backend/config:/chalice/chalicelib/config
       # TODO - avoid file mounts where possible!
       - ./backend/chalice/api_server/.chalice/config.json.dev:/chalice/.chalice/config.json
+      - .:/corpora-data-portal
   oidc:
     image: soluto/oidc-server-mock
     ports:

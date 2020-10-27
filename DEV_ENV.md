@@ -9,12 +9,12 @@
   - Modify code in the `backend` directory, and the data portal api will reload automatically.
 
 ### How to modify the dev environment
-The data portal dev environment is a set of containers defined in [docker-compose.yml](docker-compose.yml). The [backend docker image](backend/Dockerfile) and [frontend docker image](frontend/Dockerfile) are built locally. Update any of these files as necessary and run `make dev-start` to sync your dev environment with these configs.
+The data portal dev environment is a set of containers defined in [docker-compose.yml](docker-compose.yml). The [backend docker image](backend/Dockerfile) and [frontend docker image](frontend/Dockerfile) are built locally. Update any of these files as necessary and run `make dev-sync` to sync your dev environment with these configs.
 
 ### Updating frontend/backend dependencies
 Both the data portal frontend and backend services will automatically reload when their source code is modified, but they won't automatically rebuild when their dependencies change.
  
-To update the dev env to reflect changes to [frontend/package.json](frontend/package.json) or [backend/chalice/api_server/requirements.txt](backend/chalice/api_server/requirements.txt), run `make dev-start`
+To update the dev env to reflect changes to [frontend/package.json](frontend/package.json) or [backend/chalice/api_server/requirements.txt](backend/chalice/api_server/requirements.txt), run `make dev-sync`
 
 ### Make targets useful for managing dev:
 
@@ -22,10 +22,11 @@ To update the dev env to reflect changes to [frontend/package.json](frontend/pac
 | ----------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | `make dev-init`         | Launch a new local dev env and populate it with test data.                           |                                                          |
 | `make dev-start`        | Start a local dev environment that's been stopped.                                   |                                                          |
-| `make dev-status`       | Show the status of the containers in the dev environment.                            |                                                          |
 | `make dev-stop`         | Stop the local dev environment.                                                      |                                                          |
-| `make dev-clean`        | Remove everything related to the local dev environment (including db data!)          |                                                          |
 | `make dev-logs`         | Tail the logs of the dev env containers.                                             | Run `make dev-logs CONTAINER=backend` to tail the logs of a specific container. Dev containers are: backend, frontend, localstack, database, oidc |
+| `make dev-status`       | Show the status of the containers in the dev environment.                            |                                                          |
+| `make dev-clean`        | Remove everything related to the local dev environment (including db data!)          |                                                          |
+| `make dev-sync`         | Re-sync the dev-environment state after modifying library deps or docker configs     |                                                          |
 
 ### External dependencies
 The dev environment has no network dependencies, but it launches some extra containers to mock external dependencies:

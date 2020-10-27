@@ -58,9 +58,13 @@ dev-init:
 dev-status:
 	docker ps -a | grep --color=no -e 'CONTAINER\|corpora-data-portal'
 
+.PHONY: dev-sync
+dev-sync:
+	docker-compose up --build -d
+
 .PHONY: dev-start
 dev-start:
-	docker-compose up --build -d
+	docker-compose up -d
 
 .PHONY: dev-stop
 dev-stop:
