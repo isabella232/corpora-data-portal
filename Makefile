@@ -17,6 +17,12 @@ unit-test:
 	$(MAKE) clean_test_db; \
 	exit $$test_result
 
+.PHONY: unittest
+unittest:
+	PYTHONWARNINGS=ignore:ResourceWarning python3 -m coverage run \
+		-m unittest discover --start-directory tests/unit/backend --top-level-directory . --verbose; \
+	test_result=$$?; \
+	exit $$test_result
 
 clean_test_db:
 	-docker stop test_db
@@ -80,3 +86,28 @@ dev-clean:
 .PHONY: dev-logs
 dev-logs:
 	docker-compose logs -f $(CONTAINER)
+
+.PHONY: dev-shell
+dev-shell:
+	docker-compose exec $(CONTAINER) bash
+
+.PHONY: dev-unit-test
+dev-unit-test:
+	docker-compose exec backend bash -c "cd /corpora-data-portal && make unittest"
+
+.PHONY: dev-functional-test
+dev-functional-test:
+	docker-compose exec backend bash -c "cd /corpora-data-portal && make functional-test"
+
+.PHONY: dev-smoke-test-prod-build
+dev-smoke-test-prod-build:
+	docker-compose exec frontend make smoke-test-prod-build
+
+.PHONY: dev-smoke-test-with-local-backend
+dev-smoke-test-with-local-backend:
+	docker-compose exec frontend make smoke-test-with-local-backend
+
+.PHONY: smoke-test-with-local-backend-ci
+dev-smoke-test-with-local-backend-ci:
+	docker-compose exec frontend make smoke-test-with-local-backend-ci
+

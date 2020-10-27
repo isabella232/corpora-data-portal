@@ -24,7 +24,7 @@ aws --endpoint-url=http://localhost:4566 secretsmanager update-secret --secret-i
     "redirect_to_frontend": "http://localhost:8000"
 }' || true
 aws --endpoint-url=http://localhost:4566 secretsmanager update-secret --secret-id corpora/backend/dev/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@database:5432"}' || true
-aws --endpoint-url=http://localhost:4566 secretsmanager update-secret --secret-id corpora/backend/test/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@localhost:5432"}' || true
+aws --endpoint-url=http://localhost:4566 secretsmanager update-secret --secret-id corpora/backend/test/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@database:5432"}' || true
 
 # Make a 1mb data file
 echo "Writing test file to s3"

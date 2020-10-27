@@ -16,7 +16,7 @@ Both the data portal frontend and backend services will automatically reload whe
  
 To update the dev env to reflect changes to [frontend/package.json](frontend/package.json) or [backend/chalice/api_server/requirements.txt](backend/chalice/api_server/requirements.txt), run `make dev-sync`
 
-### Make targets useful for managing dev:
+### Make targets for managing dev:
 
 | Command                 | Description                                                                          | Notes                                                                                                |
 | ----------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
@@ -24,6 +24,7 @@ To update the dev env to reflect changes to [frontend/package.json](frontend/pac
 | `make dev-start`        | Start a local dev environment that's been stopped.                                   |                                                          |
 | `make dev-stop`         | Stop the local dev environment.                                                      |                                                          |
 | `make dev-logs`         | Tail the logs of the dev env containers.                                             | Run `make dev-logs CONTAINER=backend` to tail the logs of a specific container. Dev containers are: backend, frontend, localstack, database, oidc |
+| `make dev-shell CONTAINER=frontend`  | Open a command shell in one of the dev containers                       | Dev containers are: backend, frontend, localstack, database, oidc |
 | `make dev-status`       | Show the status of the containers in the dev environment.                            |                                                          |
 | `make dev-clean`        | Remove everything related to the local dev environment (including db data!)          |                                                          |
 | `make dev-sync`         | Re-sync the dev-environment state after modifying library deps or docker configs     |                                                          |
