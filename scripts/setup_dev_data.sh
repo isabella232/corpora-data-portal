@@ -4,8 +4,8 @@ export AWS_DEFAULT_REGION=us-west-2
 export AWS_ACCESS_KEY_ID=nonce
 export AWS_SECRET_ACCESS_KEY=nonce
 
-export FRONTEND_URL=http://locahost:8000
-export BACKEND_URL=http://locahost:5000
+export FRONTEND_URL=http://localhost:8000
+export BACKEND_URL=http://localhost:5000
 
 # NOTE: This script is intended to run INSIDE the dockerized dev environment!
 # If you need to run it directly on your laptop for some reason, change
@@ -56,3 +56,7 @@ echo "Populating test db"
 export CORPORA_LOCAL_DEV=true
 export BOTO_ENDPOINT_URL=${LOCALSTACK_URL}
 python3 $(dirname ${BASH_SOURCE[0]})/populate_db.py
+echo
+echo "Dev env is up and running!"
+echo "  Frontend: ${FRONTEND_URL}"
+echo "  Backend: ${BACKEND_URL}"
