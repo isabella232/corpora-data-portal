@@ -37,15 +37,13 @@ The dev environment has no network dependencies, but it launches some extra cont
 
 #### TLS Certificate for mock authentication service
 Due to browser security considerations, we must run the mock authentication
-service using a self-signed certificate. Run the following comand to install the local dev cert:
+service using a self-signed certificate. The dev-init and dev-clean make targets
+handle managing a keypair/certificate for each dev env and installing it in the
+OSX system keychain.
 
-```
-sudo security add-trusted-cert -d -p ssl -k /Library/Keychains/System.keychain oauth/pkcs12/server.crt
-```
-
-(Details: OIDC requires setting a token, and requires the cookie storing that
+Details: OIDC requires setting a token, and requires the cookie storing that
 token to be stored with samesite=None to work properly. Recent versions of
 browsers such as Chrome intentionally only allow samesite=None if the connection
 is over a secure network connection i.e. TLS. Thus we need to run even a local
 development auth service behind a certificate. We bundle a pre-generated
-self-signed cert in for convenience.)
+self-signed cert in for convenience.
