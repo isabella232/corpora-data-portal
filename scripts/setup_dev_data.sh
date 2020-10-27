@@ -16,6 +16,13 @@ export OIDC_INTERNAL_URL=http://oidc
 # How a web browser can reach the OIDC idp
 export OIDC_BROWSER_URL=https://localhost:8433
 
+echo -n "waiting for localstack to be ready: "
+until $(curl --output /dev/null --silent --head ${LOCALSTACK_URL}); do
+    echo -n '.'
+    sleep 1
+done
+echo " done"
+
 echo "Creating secretsmanager secrets"
 aws --endpoint-url=${LOCALSTACK_URL} s3api create-bucket --bucket corpora-data-dev &> /dev/null || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager create-secret --name corpora/backend/dev/auth0-secret &> /dev/null || true

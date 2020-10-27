@@ -62,19 +62,6 @@ See [DEV_ENV.md](DEV_ENV.md) for the local development guide.
 1. Run `make local-backend` to setup the api on a locally.
 1. In another terminal run `make functional-test`
 
-### Running a local development environment using docker-compose (EXPERIMENTAL)
-There is an experimental setup to run a self-contained CDP locally using
-docker-compose. It sets up a local database, a mock AWS service via
-[https://github.com/localstack/localstack](LocalStack), and a mock
-[https://github.com/Soluto/oidc-server-mock](authentication service)
-in place of Auth0.
-
-1. `docker-compose up localstack`
-1. `scripts/populate_localstack.sh` - This currently requires boto3 installed in your local pip. TODO containerize this
-1. `docker-compose up`
-
-After this initial setup, you can simply run docker-compose up.
-
 #### TLS Certificate for mock authentication service
 Due to browser security considerations, we must run the mock authentication
 service using a self-signed certificate.
