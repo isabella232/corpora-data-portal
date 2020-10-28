@@ -48,9 +48,19 @@ class SecretConfig:
 
     def __getattr__(self, name):
         if self.config_is_loaded():
-            return self.value_from_config(name) or self.value_from_env(name) or self.value_from_defaults(name) or self.raise_error(name)
+            return (
+                self.value_from_config(name)
+                or self.value_from_env(name)
+                or self.value_from_defaults(name)
+                or self.raise_error(name)
+            )
         else:
-            return self.value_from_env(name) or (self.load() and self.value_from_config(name)) or self.value_from_defaults(name) or self.raise_error(name)
+            return (
+                self.value_from_env(name)
+                or (self.load() and self.value_from_config(name))
+                or self.value_from_defaults(name)
+                or self.raise_error(name)
+            )
 
     @classmethod
     def reset(cls):
