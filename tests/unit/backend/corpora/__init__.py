@@ -7,7 +7,7 @@ from backend.corpora.common.corpora_config import CorporaConfig
 
 
 class CorporaTestCaseUsingMockAWS(unittest.TestCase):
-    CORPORA_TEST_CONFIG = {"bucket_name": "bogus_bucket"}
+    CORPORA_TEST_CONFIG = {"bucket_name": "bogus-bucket"}
 
     def setUp(self):
         # Setup configuration
