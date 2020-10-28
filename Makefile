@@ -54,7 +54,8 @@ smoke-test-with-local-backend:
 smoke-test-with-local-backend-ci:
 	$(MAKE) smoke-test-with-local-backend-ci -C ./frontend
 
-# Local-dev related commands are here for now.
+# ------ LOCAL-DEV ------
+# Local-dev related commands are below this line for now.
 oauth/pkcs12/certificate.pfx:
 	# All calls to the openssl cli happen in the oidc-server-mock container.
 	@echo "Generating certificates for local dev"
@@ -75,7 +76,7 @@ dev-status:
 	docker ps -a | grep --color=no -e 'CONTAINER\|corpora-data-portal'
 
 .PHONY: dev-sync
-dev-sync:
+dev-sync: dev-init
 	docker-compose up --build -d
 
 .PHONY: dev-start

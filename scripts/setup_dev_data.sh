@@ -14,7 +14,7 @@ export LOCALSTACK_URL=http://localstack:4566
 # How the backend can reach the OIDC idp
 export OIDC_INTERNAL_URL=http://oidc
 # How a web browser can reach the OIDC idp
-export OIDC_BROWSER_URL=https://localhost:8433
+export OIDC_BROWSER_URL=https://localhost:8443
 
 echo -n "waiting for localstack to be ready: "
 until $(curl --output /dev/null --silent --head ${LOCALSTACK_URL}); do
@@ -36,12 +36,12 @@ aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id co
     "client_secret": "dev-client-secret",
     "audience": "dev-client-id",
     "grant_type": "client_credentials",
-    "api_authorize_url": "${OIDC_BROWSER_URL}/connect/authorize",
-    "api_base_url": "${OIDC_BROWSER_URL}",
-    "api_token_url": "${OIDC_INTERNAL_URL}/connect/token",
+    "api_authorize_url": "'"${OIDC_BROWSER_URL}"'/connect/authorize",
+    "api_base_url": "'"${OIDC_BROWSER_URL}"'",
+    "api_token_url": "'"${OIDC_INTERNAL_URL}"'/connect/token",
     "cookie_name": "cxguser",
-    "callback_base_url": "${BACKEND_URL}",
-    "redirect_to_frontend": "${FRONTEND_URL}"
+    "callback_base_url": "'"${BACKEND_URL}"'",
+    "redirect_to_frontend": "'"${FRONTEND_URL}"'"
 }' || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id corpora/backend/dev/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@database:5432"}' || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id corpora/backend/test/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@database:5432"}' || true
