@@ -30,10 +30,16 @@ def get_oauth_client(config: CorporaAuthConfig) -> FlaskRemoteApp:
         # tests may have different configs
         return oauth_client
 
+    code_challenge_method = None
+    try:
+        code_challenge_method = config.code_challenge_method
+    except RuntimeError:
+        pass
+
     oauth = OAuth(current_app)
     oauth_client = oauth.register(
         "oauth",
-        #code_challenge_method='S256', # TODO, fix this.
+        code_challenge_method=code_challenge_method,
         client_id=config.client_id,
         client_secret=config.client_secret,
         api_base_url=config.api_base_url,
@@ -50,8 +56,7 @@ def login() -> Response:
     config = CorporaAuthConfig()
     client = get_oauth_client(config)
     callbackurl = f"{config.callback_base_url}/dp/v1/oauth2/callback"
-    #response = client.authorize_redirect(redirect_uri=callbackurl, code_challenge="dev-client-secret") # TODO fix this
-    response = client.authorize_redirect(redirect_uri=callbackurl) # TODO fix this
+    response = client.authorize_redirect(redirect_uri=callbackurl)
     return response
 
 

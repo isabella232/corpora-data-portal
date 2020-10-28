@@ -36,6 +36,7 @@ aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id co
     "client_secret": "dev-client-secret",
     "audience": "dev-client-id",
     "grant_type": "client_credentials",
+    "code_challenge_method": "S256",
     "api_authorize_url": "'"${OIDC_BROWSER_URL}"'/connect/authorize",
     "api_base_url": "'"${OIDC_BROWSER_URL}"'",
     "api_token_url": "'"${OIDC_INTERNAL_URL}"'/connect/token",
