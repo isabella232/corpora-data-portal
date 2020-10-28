@@ -207,7 +207,7 @@ def refresh_expired_token(token: dict) -> Optional[dict]:
         "client_secret": auth_config.client_secret,
     }
     headers = {"content-type": "application/x-www-form-urlencoded"}
-    request = requests.post(auth_config.api_token_url, urlencode(params), headers=headers) 
+    request = requests.post(auth_config.api_token_url, urlencode(params), headers=headers)
     if request.status_code != 200:
         # unable to refresh the token
         return None

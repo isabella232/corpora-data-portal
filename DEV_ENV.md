@@ -13,7 +13,7 @@ The data portal dev environment is a set of containers defined in [docker-compos
 
 ### Updating frontend/backend dependencies
 Both the data portal frontend and backend services will automatically reload when their source code is modified, but they won't automatically rebuild when their dependencies change.
- 
+
 To update the dev env to reflect changes to [frontend/package.json](frontend/package.json) or [backend/chalice/api_server/requirements.txt](backend/chalice/api_server/requirements.txt), run `make dev-sync`
 
 ### Make targets for managing dev:
