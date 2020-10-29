@@ -29,7 +29,10 @@ class ExistingAwsSecretTestFixture:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.delete()
+        try:
+          self.delete()
+        except:
+          print("failed to delete secret")
 
     @property
     def value(self):
@@ -40,4 +43,4 @@ class ExistingAwsSecretTestFixture:
         return self._secret["ARN"]
 
     def delete(self):
-        self.secrets_mgr.delete_secret(SecretId=self.arn, ForceDeleteWithoutRecovery=True)
+        self.secrets_mgr.delete_secret(SecretId=self.name, ForceDeleteWithoutRecovery=True)

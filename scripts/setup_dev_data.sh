@@ -26,6 +26,7 @@ echo " done"
 echo "Creating secretsmanager secrets"
 aws --endpoint-url=${LOCALSTACK_URL} s3api create-bucket --bucket corpora-data-dev &> /dev/null || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager create-secret --name corpora/backend/dev/auth0-secret &> /dev/null || true
+aws --endpoint-url=${LOCALSTACK_URL} secretsmanager create-secret --name corpora/cicd/test/auth0-secret &> /dev/null || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager create-secret --name corpora/backend/dev/database_local &> /dev/null || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager create-secret --name corpora/backend/test/database_local &> /dev/null || true
 
@@ -43,6 +44,15 @@ aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id co
     "callback_base_url": "'"${BACKEND_URL}"'",
     "redirect_to_frontend": "'"${FRONTEND_URL}"'"
 }' || true
+
+# TODO: python3 -m unittest tests.unit.backend.corpora.common.test_authorizer.TestAuthorizer.test_invalid_token
+aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id corpora/cicd/test/auth0-secret --secret-string '{
+    "client_id": "",
+    "client_secret": "",
+    "audience": "",
+    "grant_type": ""
+}' || true
+
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id corpora/backend/dev/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@database:5432"}' || true
 aws --endpoint-url=${LOCALSTACK_URL} secretsmanager update-secret --secret-id corpora/backend/test/database_local --secret-string '{"database_uri": "postgresql://corpora:test_pw@database:5432"}' || true
 
