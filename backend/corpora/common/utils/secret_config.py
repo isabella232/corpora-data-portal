@@ -66,7 +66,6 @@ class SecretConfig:
         cls._config = None
         cls._defaults = {}
         cls.use_env = False
-        self.update_defaults()
 
     def get_defaults_template(self):
         return {}
@@ -83,6 +82,7 @@ class SecretConfig:
 
         self.__class__._config = config
         self.__class__.use_env = False
+        self.update_defaults()
 
     def set_defaults(self, defaults):
         self._defaults = defaults
