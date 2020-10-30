@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 
 import anndata
@@ -10,8 +11,6 @@ from scipy.sparse import spmatrix
 
 from .utils.corpora_constants import CorporaConstants
 from .utils.math_utils import sizeof_formatted
-import os
-import boto3
 
 class DatasetValidator:
     """Validates a dataset file that has been uploaded by a submitted to ensure that the correct required metadata
