@@ -49,12 +49,13 @@ services:
       - PYTHONUNBUFFERED=1
       - CORPORA_LOCAL_DEV=true
       - AWS_REGION=us-west-2
+      - AWS_DEFAULT_REGION=us-west-2
       - AWS_ACCESS_KEY_ID=dev_access_key_id
       - AWS_SECRET_ACCESS_KEY=dev_secret_access_key
       - BOTO_ENDPOINT_URL=http://localstack:4566
       - DEPLOYMENT_STAGE=dev
       - RESTART_ON_FAILURE=yes
-    #command: ["python3", "run_local_server.py", "--host", "0.0.0.0"]
+      - IS_DOCKER_DEV=yes # This skips some unit tests.
     command: ["python3", "/chalice/run_local_server.py", "--host", "0.0.0.0"]
     volumes:
       - ./backend/chalice/api_server:/chalice
