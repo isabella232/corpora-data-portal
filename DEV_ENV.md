@@ -33,6 +33,7 @@ To update the dev env to reflect changes to [frontend/package.json](frontend/pac
 | Command                 | Description                                                                          | Notes                                                                                                |
 | ----------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | `make dev-unit-test`    | Run backend tests in the dev environment                                             |                                                          |
+| `make dev-functional-test` | Run functional tests in the dev environment                                       |                                                          |
 | `make dev-smoke-test`   | Run frontend/e2e tests in the dev environment                                        |                                                          |
 
 ### External dependencies

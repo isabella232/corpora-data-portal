@@ -116,7 +116,7 @@ dev-unit-test:
 
 .PHONY: dev-functional-test
 dev-functional-test:
-	docker-compose exec backend bash -c "cd /corpora-data-portal && make functional-test"
+	docker-compose exec backend bash -c "cd /corpora-data-portal && export DEPLOYMENT_STAGE=test && make functional-test"
 
 .PHONY: dev-smoke-test
 dev-smoke-test:
