@@ -4,35 +4,35 @@ from datetime import datetime
 
 from furl import furl
 
-from backend.corpora.common.corpora_orm import ProjectStatus
-from backend.corpora.common.entities import Project
+from backend.corpora.common.corpora_orm import CollectionVisibility
+from backend.corpora.common.entities import Collection
 from tests.unit.backend.chalice.api_server import BaseAPITest
-from tests.unit.backend.utils import BogusProjectParams
+from tests.unit.backend.utils import BogusCollectionParams
 
 
-class TestProject(BaseAPITest, unittest.TestCase):
-    def validate_projects_response_structure(self, body):
-        self.assertIn("projects", body)
-        self.assertTrue(all(k in ["projects", "from_date", "to_date"] for k in body))
+class TestCollection(BaseAPITest, unittest.TestCase):
+    def validate_collections_response_structure(self, body):
+        self.assertIn("collections", body)
+        self.assertTrue(all(k in ["collections", "from_date", "to_date"] for k in body))
 
-        for project in body["projects"]:
-            self.assertListEqual(sorted(project.keys()), ["created_at", "id"])
-            self.assertGreaterEqual(datetime.fromtimestamp(project["created_at"]).year, 1969)
+        for collection in body["collections"]:
+            self.assertListEqual(sorted(collection.keys()), ["created_at", "id"])
+            self.assertGreaterEqual(datetime.fromtimestamp(collection["created_at"]).year, 1969)
 
-    def validate_project_uuid_response_structure(self, body):
+    def validate_collection_uuid_response_structure(self, body):
         required_keys = [
             "name",
             "description",
             "id",
-            "s3_bucket_key",
-            "status",
-            "processing_state",
-            "validation_state",
+            "visibility",
             "links",
-            "attestation",
             "datasets",
             "created_at",
             "updated_at",
+            "obfuscated_uuid",
+            "contact_email",
+            "contact_name",
+            "data_submission_policy_version",
         ]
         self.assertListEqual(sorted(body.keys()), sorted(required_keys))
         self.assertGreaterEqual(datetime.fromtimestamp(body["created_at"]).year, 1969)
@@ -52,39 +52,40 @@ class TestProject(BaseAPITest, unittest.TestCase):
                 "organism",
                 "development_stage",
                 "name",
-                "source_data_location",
                 "revision",
                 "dataset_deployments",
                 "dataset_assets",
-                "preprint_doi",
-                "publication_doi",
                 "created_at",
                 "updated_at",
-                "project_id",
-                "project_status",
+                "collection_id",
+                "collection_visibility",
+                "is_valid",
+                "cell_count",
             ]
             self.assertListEqual(sorted(dataset.keys()), sorted(required_keys))
 
-    def test__list_project__ok(self):
-        path = "/dp/v1/project"
+    def test__list_collection__ok(self):
+        path = "/dp/v1/collection"
         headers = dict(host="localhost")
 
         from_date = int(datetime.fromtimestamp(60).timestamp())
         creation_time = 70
         to_date = int(datetime.fromtimestamp(80).timestamp())
 
-        test_project = Project.create(
-            **BogusProjectParams.get(status=ProjectStatus.LIVE.name, created_at=datetime.fromtimestamp(creation_time)),
+        test_collection = Collection.create(
+            **BogusCollectionParams.get(
+                visibility=CollectionVisibility.PUBLIC.name, created_at=datetime.fromtimestamp(creation_time)
+            ),
         )
-        expected_id = test_project.id
+        expected_id = test_collection.id
 
         with self.subTest("No Parameters"):
             test_url = furl(path=path)
             response = self.app.get(test_url.url, headers=headers)
             response.raise_for_status()
             actual_body = json.loads(response.body)
-            self.validate_projects_response_structure(actual_body)
-            self.assertIn(expected_id, [p["id"] for p in actual_body["projects"]])
+            self.validate_collections_response_structure(actual_body)
+            self.assertIn(expected_id, [p["id"] for p in actual_body["collections"]])
             self.assertEqual(None, actual_body.get("to_date"))
             self.assertEqual(None, actual_body.get("from_date"))
 
@@ -93,8 +94,8 @@ class TestProject(BaseAPITest, unittest.TestCase):
             response = self.app.get(test_url.url, headers=headers)
             response.raise_for_status()
             actual_body = json.loads(response.body)
-            self.validate_projects_response_structure(actual_body)
-            self.assertIn(expected_id, [p["id"] for p in actual_body["projects"]])
+            self.validate_collections_response_structure(actual_body)
+            self.assertIn(expected_id, [p["id"] for p in actual_body["collections"]])
             self.assertEqual(None, actual_body.get("to_date"))
             self.assertEqual(actual_body["from_date"], from_date)
 
@@ -103,8 +104,8 @@ class TestProject(BaseAPITest, unittest.TestCase):
             response = self.app.get(test_url.url, headers=headers)
             response.raise_for_status()
             actual_body = json.loads(response.body)
-            self.validate_projects_response_structure(actual_body)
-            self.assertIn(expected_id, [p["id"] for p in actual_body["projects"]])
+            self.validate_collections_response_structure(actual_body)
+            self.assertIn(expected_id, [p["id"] for p in actual_body["collections"]])
             self.assertEqual(to_date, actual_body["to_date"])
             self.assertEqual(None, actual_body.get("from_date"))
 
@@ -113,16 +114,15 @@ class TestProject(BaseAPITest, unittest.TestCase):
             response = self.app.get(test_url.url, headers=headers)
             response.raise_for_status()
             actual_body = json.loads(response.body)
-            self.validate_projects_response_structure(actual_body)
-            self.assertEqual(expected_id, actual_body["projects"][0]["id"])
-            self.assertEqual(creation_time, actual_body["projects"][0]["created_at"])
+            self.validate_collections_response_structure(actual_body)
+            self.assertEqual(expected_id, actual_body["collections"][0]["id"])
+            self.assertEqual(creation_time, actual_body["collections"][0]["created_at"])
             self.assertEqual(from_date, actual_body["from_date"])
             self.assertEqual(to_date, actual_body["to_date"])
 
-    def test__get_project_uuid__ok(self):
-        """Verify the test project exists and the expected fields exist."""
+    def test__get_collection_uuid__ok(self):
+        """Verify the test collection exists and the expected fields exist."""
         expected_body = {
-            "attestation": {"needed": False, "tc_uri": "test_tc_uri"},
             "datasets": [
                 {
                     "assay": [{"ontology_term_id": "test_obo", "label": "test_assay"}],
@@ -140,7 +140,6 @@ class TestProject(BaseAPITest, unittest.TestCase):
                     "dataset_deployments": [
                         {
                             "dataset_id": "test_dataset_id",
-                            "environment": "test",
                             "id": "test_deployment_directory_id",
                             "url": "test_url",
                         }
@@ -155,39 +154,39 @@ class TestProject(BaseAPITest, unittest.TestCase):
                     "id": "test_dataset_id",
                     "name": "test_dataset_name",
                     "organism": {"label": "test_organism", "ontology_term_id": "test_obo"},
-                    "preprint_doi": "test_preprint_doi",
-                    "project_id": "test_project_id",
-                    "project_status": "LIVE",
-                    "publication_doi": "test_publication_doi",
+                    "collection_id": "test_collection_id",
+                    "collection_visibility": "PUBLIC",
+                    "cell_count": None,
+                    "is_valid": False,
                     "revision": 0,
                     "sex": ["test_sex", "test_sex2"],
                     "tissue": [{"label": "test_tissue", "ontology_term_id": "test_obo"}],
-                    "source_data_location": "test_source_data_location",
                 }
             ],
             "description": "test_description",
-            "id": "test_project_id",
+            "id": "test_collection_id",
             "links": [
                 {"type": "RAW_DATA", "name": "test_link_name", "url": "test_url"},
-                {"type": "SUMMARY", "name": "test_summary_link_name", "url": "test_summary_url"},
+                {"type": "OTHER", "name": "test_summary_link_name", "url": "test_summary_url"},
             ],
-            "name": "test_project",
-            "processing_state": "NA",
-            "s3_bucket_key": "test_s3_bucket",
-            "status": "LIVE",
-            "validation_state": "NOT_VALIDATED",
+            "name": "test_collection",
+            "visibility": "PUBLIC",
+            "obfuscated_uuid": "",
+            "contact_email": "",
+            "contact_name": "",
+            "data_submission_policy_version": "0",
         }
 
-        test_url = furl(path="/dp/v1/project/test_project_id")
+        test_url = furl(path="/dp/v1/collection/test_collection_id")
         response = self.app.get(test_url.url, headers=dict(host="localhost"))
         response.raise_for_status()
-        self.validate_project_uuid_response_structure(json.loads(response.body))
+        self.validate_collection_uuid_response_structure(json.loads(response.body))
         actual_body = self.remove_timestamps(json.loads(response.body))
         self.assertDictEqual(actual_body, expected_body)
 
-    def test__get_project_uuid__403_not_found(self):
-        """Verify the test project exists and the expected fields exist."""
-        test_url = furl(path="/dp/v1/project/AAAA-BBBB-CCCC-DDDD")
+    def test__get_collection_uuid__403_not_found(self):
+        """Verify the test collection exists and the expected fields exist."""
+        test_url = furl(path="/dp/v1/collection/AAAA-BBBB-CCCC-DDDD")
         response = self.app.get(test_url.url, headers=dict(host="localhost"))
         self.assertEqual(403, response.status_code)
         self.assertIn("X-AWS-REQUEST-ID", response.headers.keys())
