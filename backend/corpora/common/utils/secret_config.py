@@ -36,6 +36,7 @@ class SecretConfig:
         """
 
         super(SecretConfig, self).__init__()
+
         self._component_name = component_name
         self._deployment = deployment or os.environ["DEPLOYMENT_STAGE"]
         self._secret_name = secret_name
@@ -67,13 +68,6 @@ class SecretConfig:
         cls._defaults = {}
         cls.use_env = False
 
-    def get_defaults_template(self):
-        return {}
-
-    def update_defaults(self):
-        for k, v in self.get_defaults_template().items():
-            self.__class__._defaults[k] = v.format(**self.config)
-
     def set(self, config):
         """
         Bypass the load mechanism and set secrets directly.
@@ -84,8 +78,12 @@ class SecretConfig:
         self.__class__.use_env = False
         self.update_defaults()
 
-    def set_defaults(self, defaults):
-        self._defaults = defaults
+    def get_defaults_template(self):
+        return {}
+
+    def update_defaults(self):
+        for k, v in self.get_defaults_template().items():
+            self.__class__._defaults[k] = v.format(**self.config)
 
     def load(self):
         if self._source == "aws":

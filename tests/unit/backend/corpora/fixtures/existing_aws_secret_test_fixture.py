@@ -30,9 +30,9 @@ class ExistingAwsSecretTestFixture:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
-          self.delete()
+            self.delete()
         except:
-          print("failed to delete secret")
+            print("failed to delete secret")
 
     @property
     def value(self):

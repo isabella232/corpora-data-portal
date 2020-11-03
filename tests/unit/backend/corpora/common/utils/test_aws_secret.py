@@ -1,6 +1,6 @@
+import os
 import unittest
 from time import sleep
-import os
 
 import boto3
 from mock import patch

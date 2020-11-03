@@ -34,7 +34,7 @@ ci-deploy: retrieve-deployed
 	make deploy
 
 .PHONY: package
-package:
+package: build-chalice-config
 	mkdir -p chalicelib/corpora
 	cp -R ../../corpora/common chalicelib/corpora
 	cp -R ../../corpora/lambdas chalicelib/corpora

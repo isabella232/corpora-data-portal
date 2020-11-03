@@ -1,7 +1,7 @@
+import os
 import unittest
 
 import boto3
-import os
 from moto import mock_s3
 
 from backend.corpora.common.corpora_config import CorporaConfig
@@ -21,7 +21,9 @@ class CorporaTestCaseUsingMockAWS(unittest.TestCase):
             self.s3_mock.start()
 
         # Corpora Bucket
-        self.s3_resource = boto3.resource("s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=boto3.session.Config(signature_version='s3v4'))
+        self.s3_resource = boto3.resource(
+            "s3", endpoint_url=os.getenv("BOTO_ENDPOINT_URL"), config=boto3.session.Config(signature_version="s3v4")
+        )
         self.bucket = self.s3_resource.Bucket(self.corpora_config.bucket_name)
         self.bucket.create()
 

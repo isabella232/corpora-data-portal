@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import List
-import os
 
 import boto3
 
