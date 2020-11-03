@@ -43,4 +43,4 @@ smoke-test-with-local-backend-ci:
 
 .PHONY: smoke-test-with-local-dev
 smoke-test-with-local-dev:
-	npm run e2e-localProd
+	npm run e2e-dev

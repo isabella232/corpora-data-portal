@@ -118,15 +118,6 @@ dev-unit-test:
 dev-functional-test:
 	docker-compose exec backend bash -c "cd /corpora-data-portal && make functional-test"
 
-.PHONY: dev-smoke-test-prod-build
-dev-smoke-test-prod-build:
-	docker-compose exec frontend make smoke-test-prod-build
-
-.PHONY: dev-smoke-test-with-local-backend
-dev-smoke-test-with-local-backend:
-	docker-compose exec frontend make smoke-test-with-local-backend
-
-.PHONY: smoke-test-with-local-backend-ci
-dev-smoke-test-with-local-backend-ci:
-	docker-compose exec frontend make smoke-test-with-local-backend-ci
-
+.PHONY: dev-smoke-test
+dev-smoke-test:
+	docker-compose exec frontend make smoke-test-with-local-dev

@@ -29,6 +29,12 @@ To update the dev env to reflect changes to [frontend/package.json](frontend/pac
 | `make dev-clean`        | Remove everything related to the local dev environment (including db data!)          |                                                          |
 | `make dev-sync`         | Re-sync the dev-environment state after modifying library deps or docker configs     |                                                          |
 
+### Make targets for running tests in dev
+| Command                 | Description                                                                          | Notes                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `make dev-unit-test`    | Run backend tests in the dev environment                                             |                                                          |
+| `make dev-smoke-test`   | Run frontend/e2e tests in the dev environment                                        |                                                          |
+
 ### External dependencies
 The dev environment has no network dependencies, but it launches some extra containers to mock external dependencies:
  - [LocalStack](https://github.com/localstack/localstack) to mock AWS

@@ -55,7 +55,7 @@ services:
       - DEPLOYMENT_STAGE=dev
       - RESTART_ON_FAILURE=yes
     #command: ["python3", "run_local_server.py", "--host", "0.0.0.0"]
-    command: ["python3", "/chalice/run_dev_server.py", "--host", "0.0.0.0"]
+    command: ["python3", "/chalice/run_local_server.py", "--host", "0.0.0.0"]
     volumes:
       - ./backend/chalice/api_server:/chalice
       - ./backend/corpora:/chalice/chalicelib/corpora
