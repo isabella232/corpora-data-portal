@@ -8,13 +8,17 @@
   - Modify code in the `frontend/src` directory, save your changes and the browser will update in real time.
   - Modify code in the `backend` directory, and the data portal api will reload automatically.
 
-### How to modify the dev environment
+### Containers managed by the dev environment
 The data portal dev environment is a set of containers defined in [docker-compose.yml](docker-compose.yml). The [backend docker image](backend/Dockerfile) and [frontend docker image](frontend/Dockerfile) are built locally. Update any of these files as necessary and run `make dev-sync` to sync your dev environment with these configs.
+![Dev Environment Containers](docs/dev_env.jpg)
 
 ### Updating frontend/backend dependencies
-Both the data portal frontend and backend services will automatically reload when their source code is modified, but they won't automatically rebuild when their dependencies change.
+Both the data portal frontend and backend services will automatically reload when their source code is modified, but they won't automatically rebuild when their dependencies (such as npm or pip package lists) change.
 
 To update the dev env to reflect changes to [frontend/package.json](frontend/package.json) or [backend/chalice/api_server/requirements.txt](backend/chalice/api_server/requirements.txt), run `make dev-sync`
+
+### Update Dev Data
+The dev environment is initialized with AWS Secrets/S3 data in the [scripts/setup_dev_data.sh](scripts/setup_dev_data.sh) script, as well as DB data from [tests/unit/backend/corpora/fixtures/database/__init__.py](tests/unit/backend/corpora/fixtures/database/__init__.py). To add more data, modify these scripts and run `make dev-init` to reload the dev environment's data stores.
 
 ### Make targets for managing dev:
 
