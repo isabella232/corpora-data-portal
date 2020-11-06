@@ -14,7 +14,9 @@ WORKDIR /opt/node_app
 # -- TODO, we should try turning this back on later.
 # USER node
 COPY package.json package-lock.json* ./
-RUN npm install --no-optional && npm cache clean --force
+ENV NODE_OPTIONS=--max_old_space_size=7680
+RUN npm --verbose install --no-optional
+RUN npm --verbose cache clean --force
 ENV PATH /opt/node_app/node_modules/.bin:$PATH
 
 # -- TODO, we should try turning this back on later.
