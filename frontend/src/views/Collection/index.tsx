@@ -2,7 +2,7 @@ import { Button, Classes, H3, H4, Intent, UL } from "@blueprintjs/core";
 import { RouteComponentProps } from "@reach/router";
 import React, { FC } from "react";
 import { COLLECTION_LINK_TYPE_OPTIONS, Link } from "src/common/entities";
-import { useCollection } from "src/common/queries/collections";
+import { useCollection, VISIBILITY } from "src/common/queries/collections";
 import {
   CenterAlignedDiv,
   CollectionInfo,
@@ -82,8 +82,14 @@ const renderLinks = (links: Link[]) => {
 };
 
 const Collection: FC<Props> = ({ id }) => {
-  const { data: collection } = useCollection(id ?? "");
-  if (!collection) return null;
+  const isPrivate = window.location.pathname.includes("/private");
+
+  const { data: collection, isError } = useCollection(
+    id ?? "",
+    isPrivate ? VISIBILITY.PRIVATE : VISIBILITY.PUBLIC
+  );
+
+  if (!collection || isError) return null;
 
   return (
     <ViewGrid>
