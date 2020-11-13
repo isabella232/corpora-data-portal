@@ -3,6 +3,7 @@ import { RouteComponentProps } from "@reach/router";
 import React, { FC } from "react";
 import { COLLECTION_LINK_TYPE_OPTIONS, Link } from "src/common/entities";
 import { useCollection } from "src/common/queries/collections";
+import { getUrlHost } from "src/common/utils/getURLHost";
 import {
   CenterAlignedDiv,
   CollectionInfo,
@@ -21,18 +22,6 @@ interface RouteProps {
 }
 
 export type Props = RouteComponentProps<RouteProps>;
-
-const getDomain = (url: string): string | null => {
-  let result;
-
-  try {
-    result = new URL(url);
-  } catch {
-    return null;
-  }
-
-  return result.host;
-};
 
 const RenderEmptyDatasets = () => {
   return (
@@ -61,21 +50,21 @@ const RenderEmptyDatasets = () => {
 };
 
 const renderLinks = (links: Link[]) => {
-  return links.map(({ url, type }) => {
+  return links.map(({ link_url: url, link_type: type }) => {
     const linkTypeOption = COLLECTION_LINK_TYPE_OPTIONS[type];
 
     if (!linkTypeOption) return null;
 
-    const domain = getDomain(url);
+    const urlHost = getUrlHost(url);
 
     const { text } = linkTypeOption;
 
-    if (!domain) return null;
+    if (!urlHost) return null;
 
     return (
       <React.Fragment key={`${type}+${url}`}>
         <span className={Classes.TEXT_MUTED}>{text}</span>
-        <StyledLink href={url}>{domain}</StyledLink>
+        <StyledLink href={url}>{urlHost}</StyledLink>
       </React.Fragment>
     );
   });
