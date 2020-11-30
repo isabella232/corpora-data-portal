@@ -40,9 +40,10 @@ def requires_auth():
 
     return decorate
 
+app_name = f"{os.environ['APP_NAME']}-{os.environ['DEPLOYMENT_STAGE']}"
 
 def create_flask_app():
-    app = connexion.FlaskApp(f"{os.environ['APP_NAME']}-{os.environ['DEPLOYMENT_STAGE']}")
+    app = connexion.FlaskApp(app_name)
     swagger_spec_path = os.path.join(pkg_root, "config", f"{os.environ['APP_NAME']}.yml")
     app.add_api(swagger_spec_path, validate_responses=True)
     return app.app
@@ -158,3 +159,8 @@ def get_chalice_app(flask_app):
 
 
 app = get_chalice_app(create_flask_app())
+
+
+@app.lambda_function(name=f"{app_name}-Cleanup")
+def cleanup(event, context):
+    pass
