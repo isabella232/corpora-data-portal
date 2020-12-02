@@ -35,6 +35,8 @@ deploy: package
 ci-deploy: retrieve-deployed
 	make deploy
 
+# package prepares a Lambda zipfile with the help of the Chalice packager (which also emits a SAM template).
+# We also inject any wheels found in vendor.in, and rewrite the zipfile to make the build reproducible.
 .PHONY: package
 package: build-chalice-config
 	mkdir -p chalicelib/corpora
@@ -45,7 +47,15 @@ package: build-chalice-config
 	rm -rf vendor dist/deployment
 	mkdir vendor
 	find vendor -name '*.pyc' -delete
+	find vendor -exec touch -t 201901010000 {} \; # Reset mtimes on all vendor files to make zipfile contents reproducible
 	shopt -s nullglob; for wheel in vendor.in/*/*.whl; do pip install --target vendor --upgrade $$wheel; done
+	chalice package --pkg-format terraform --stage $(DEPLOYMENT_STAGE) dist
+	python3 ./scripts/generate_openapi.py
+	cd dist; mkdir deployment; cd deployment; unzip -q -o ../deployment.zip
+	$(MAKE) prune
+	find dist/deployment -exec touch -t 201901010000 {} \; # Reset mtimes on all dep files to make zipfile contents reproducible
+	rm dist/deployment.zip
+	cd dist/deployment; zip -q -X -r ../deployment.zip .
 
 .PHONY: build-chalice-config
 build-chalice-config:
@@ -61,6 +71,11 @@ build-chalice-config:
 	cd .chalice; jq .stages.$(DEPLOYMENT_STAGE).api_gateway_stage=env.DEPLOYMENT_STAGE config.json | sponge config.json
 	cd .chalice; jq --argjson subnets '$(PRIVATE_SUBNET_IDS)' '.stages.$(DEPLOYMENT_STAGE).subnet_ids=$$subnets' config.json | sponge config.json
 	cd .chalice; jq .stages.$(DEPLOYMENT_STAGE).security_group_ids+=[env.SECURITY_GROUP_ID] config.json | sponge config.json
+
+# Remove unused dependencies that consume substantial space in the package.
+# See https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+prune:
+	cd dist/deployment; rm -rf awscli* boto3* botocore* cryptography* swagger_ui_bundle/vendor/swagger-ui-2* connexion/vendor/swagger-ui*
 
 .PHONY: local-server
 local-server: package
