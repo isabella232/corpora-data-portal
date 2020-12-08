@@ -9,7 +9,7 @@ Resources:
   DevEnv:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://s3.amazonaws.com/sc-happy-corpora-dev/dp-entrypoint.yml
+      TemplateURL: https://happy-cf.s3.us-west-2.amazonaws.com/dp-entrypoint_dev.yml
       Parameters:
         CustomStackName: !Ref AWS::StackName
         ImageTag: !Ref ImageTag

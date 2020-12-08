@@ -25,7 +25,7 @@ def cli(ctx, profile):
 
 
 def get_secrets(ctx):
-    output = run_aws_cmd(ctx, ["secretsmanager", "get-secret-value", "--secret-id", "happy/dp-rdev-config"])
+    output = run_aws_cmd(ctx, ["secretsmanager", "get-secret-value", "--secret-id", "happy/dp-dpdev-config"])
     secrets = json.loads(output["SecretString"])
     return secrets
 
