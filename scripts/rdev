@@ -95,7 +95,7 @@ class EnvMeta:
 
     def generate_parameter_args(self):
         args = []
-        contents = open("upload_sfn_definition.json", "r").read()
+        contents = open("scripts/upload_sfn_definition.json", "r").read()
         for k, v in self.parameter_map.items():
             args.append(f"ParameterKey={v},ParameterValue={self.meta[k]}")
         args.append(f"ParameterKey=StateMachineDefinition,ParameterValue={contents}")
