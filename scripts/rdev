@@ -90,15 +90,24 @@ class EnvMeta:
     def generate_tag_args(self):
         args = []
         for k, v in self.tag_map.items():
-            args.append(f"Key={v},Value={self.meta[k]}")
+            args.append({
+                "Key": v,
+                "Value": str(self.meta[k])
+            })
         return args
 
     def generate_parameter_args(self):
         args = []
         contents = open("scripts/upload_sfn_definition.json", "r").read()
         for k, v in self.parameter_map.items():
-            args.append(f"ParameterKey={v},ParameterValue={self.meta[k]}")
-        args.append(f"ParameterKey=StateMachineDefinition,ParameterValue={contents}")
+            args.append({
+                "ParameterKey": v,
+                "ParameterValue": self.meta[k]
+            })
+        args.append({
+            "ParameterKey": "StateMachineDefinition",
+            "ParameterValue": contents
+        })
         return args
 
     def update(self, tag, env_mgr):
@@ -398,30 +407,14 @@ def create(ctx, stack_name, tag, wait):
         ctx.invoke(push, tag=tag)
     env_meta.update(tag, DevEnvMgr(ctx))
     print(f"creating {stack_name}")
-    command = [
-        "aws",
-        "cloudformation",
-        "create-stack",
-        "--template-body",
-        "file://scripts/remotedev.yml",
-        "--profile",
-        ctx.obj["aws_profile"],
-        "--on-failure",
-        "DO_NOTHING",
-        "--stack-name",
-        stack_name,
-    ]
-    tag_args = env_meta.generate_tag_args()
-    if tag_args:
-        command.append("--tags")
-        command.extend(tag_args)
-
-    param_args = env_meta.generate_parameter_args()
-    if param_args:
-        command.append("--parameters")
-        command.extend(param_args)
-
-    subprocess.check_call(command)
+    cf_client = boto3.client("cloudformation", config=ctx.obj["aws_conf"])
+    cf_client.create_stack(
+        StackName=stack_name,
+        TemplateBody=open("scripts/remotedev.yml").read(), # FIXME
+        Parameters=env_meta.generate_parameter_args(),
+        OnFailure="DO_NOTHING",
+        Tags=env_meta.generate_tag_args()
+    )
     while True:
         try:
             wait_for_migration_update(ctx, stack_name)
@@ -448,27 +441,14 @@ def update(ctx, stack_name, tag, wait):
     env = envmgr.get_env(stack_name)
     env_meta = env["meta"]
     env_meta.update(tag, envmgr)
-    command = [
-        "aws",
-        "cloudformation",
-        "update-stack",
-        "--template-body",
-        "file://scripts/remotedev.yml",
-        "--profile",
-        ctx.obj["aws_profile"],
-        "--stack-name",
-        stack_name,
-    ]
-    tag_args = env_meta.generate_tag_args()
-    if tag_args:
-        command.append("--tags")
-        command.extend(tag_args)
 
-    param_args = env_meta.generate_parameter_args()
-    if param_args:
-        command.append("--parameters")
-        command.extend(param_args)
-    subprocess.check_call(command)
+    cf_client = boto3.client("cloudformation", config=ctx.obj["aws_conf"])
+    cf_client.update_stack(
+        StackName=stack_name,
+        TemplateBody=open("scripts/remotedev.yml").read(), # FIXME
+        Parameters=env_meta.generate_parameter_args(),
+        Tags=env_meta.generate_tag_args()
+    )
     migration_taskdef = get_migration_taskdef(ctx, stack_name)["arn"]
     # invoke migrations
     wait_for_migration_update(ctx, stack_name)
