@@ -27,11 +27,11 @@ RUN pip3 install loompy==3.0.6 scanpy==1.6.0 python-igraph==0.8.3 louvain==0.7.0
                  awscli
 
 ADD requirements.txt code/requirements.txt
-ADD chalice/api_server/requirements.txt code/chalice/api_server/requirements.txt
-RUN pip3 install -r requirements.txt
+ADD backend/chalice/api_server/requirements.txt code/backend/chalice/api_server/requirements.txt
+RUN pip3 install -r code/requirements.txt
 
-ADD corpora/dataset_processing code/dataset_processing
-ADD corpora/common code/common
+ADD backend/corpora/dataset_processing code/dataset_processing
+ADD backend/corpora/common code/common
 
 RUN chmod a+x /code/dataset_processing/process.py
 

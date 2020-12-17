@@ -607,6 +607,7 @@ def push(ctx, tag):
     secrets = get_secrets(ctx)
     frontend_ecr = secrets["frontend_ecr"]
     backend_ecr = secrets["backend_ecr"]
+    upload_ecr = secrets["upload_ecr"]
     print("logging in to ECR...")
     pwd = run_aws_cmd(ctx, ["ecr", "get-login-password", "--region", "us-west-2"], json_output=False)
     login_ecr = frontend_ecr.split("/")[0]
@@ -614,9 +615,11 @@ def push(ctx, tag):
     print("Tagging images...")
     subprocess.check_call(["docker", "tag", "corpora-frontend:latest", f"{frontend_ecr}:{tag}"])
     subprocess.check_call(["docker", "tag", "corpora-backend:latest", f"{backend_ecr}:{tag}"])
+    subprocess.check_call(["docker", "tag", "corpora-processing:latest", f"{upload_ecr}:{tag}"])
     print("Pushing images...")
     subprocess.check_call(["docker", "push", f"{frontend_ecr}:{tag}"])
     subprocess.check_call(["docker", "push", f"{backend_ecr}:{tag}"])
+    subprocess.check_call(["docker", "push", f"{upload_ecr}:{tag}"])
     print(f"Built and pushed docker images with tag: {tag}")
 
 
