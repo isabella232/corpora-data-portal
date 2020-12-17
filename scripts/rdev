@@ -102,7 +102,7 @@ class EnvMeta:
         for k, v in self.parameter_map.items():
             args.append({
                 "ParameterKey": v,
-                "ParameterValue": self.meta[k]
+                "ParameterValue": str(self.meta[k]),
             })
         args.append({
             "ParameterKey": "StateMachineDefinition",
@@ -418,8 +418,9 @@ def create(ctx, stack_name, tag, wait):
 @click.argument("stack_name")
 @click.option("--tag", help="Tag name for docker image. Leave empty to generate one automatically.", default=None)
 @click.option("--wait/--no-wait", is_flag=True, default=True, help="wait for this to complete")
+@click.option("--skip-migrations/--do-migrations", is_flag=True, default=False, help="Skip running migrations")
 @click.pass_context
-def update(ctx, stack_name, tag, wait):
+def update(ctx, stack_name, tag, wait, skip_migrations):
     """Update a dev stack tag version"""
     print(f"updating {stack_name}")
     if not tag:
@@ -437,10 +438,12 @@ def update(ctx, stack_name, tag, wait):
         Parameters=env_meta.generate_parameter_args(),
         Tags=env_meta.generate_tag_args()
     )
-    migration_taskdef = get_migration_taskdef(ctx, stack_name)["arn"]
-    # invoke migrations
-    wait_for_migration_update(ctx, stack_name)
-    ctx.invoke(migrate, stack_name=stack_name)
+    if not skip_migrations:
+        migration_taskdef = get_migration_taskdef(ctx, stack_name)["arn"]
+        # invoke migrations
+        wait_for_migration_update(ctx, stack_name)
+        ctx.invoke(migrate, stack_name=stack_name)
+
     # Wait for the rest of the stack to update.
     if wait:
         invoke_wait(ctx, stack_name)
