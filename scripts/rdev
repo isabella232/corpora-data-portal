@@ -96,17 +96,16 @@ class EnvMeta:
             })
         return args
 
-    def generate_parameter_args(self):
+    def generate_parameter_args(self, statemachine_file):
         args = []
-        contents = open("scripts/upload_sfn_definition.json", "r").read()
         for k, v in self.parameter_map.items():
             args.append({
                 "ParameterKey": v,
                 "ParameterValue": str(self.meta[k]),
             })
         args.append({
-            "ParameterKey": "StateMachineDefinition",
-            "ParameterValue": contents
+            "ParameterKey": "StateMachineLocation",
+            "ParameterValue": statemachine_file
         })
         return args
 
@@ -180,6 +179,14 @@ def cli(ctx, profile):
     client = boto3.client("cloudformation", config=aws_conf)
     ctx.obj["client"] = client
     ctx.obj["aws_conf"] = aws_conf
+
+
+def upload_statemachine(ctx, stack_name):
+    s3_bucket = "sc-happy-corpora-dev"
+    s3_client = boto3.resource("s3", config=ctx.obj["aws_conf"])
+    s3_key = f"/statemachineTmp/{stack_name}.json"
+    s3_client.Bucket(s3_bucket).upload_fileobj(open("scripts/remotedev.yml").read())
+    return f"s3://{s3_bucket}{s3_key}"
 
 
 def get_secrets(ctx):
@@ -406,11 +413,13 @@ def create(ctx, stack_name, tag, wait):
         ctx.invoke(push, tag=tag)
     env_meta.update(tag, DevEnvMgr(ctx))
     print(f"creating {stack_name}")
+
+    statemachine_file = upload_statemachine(ctx, stack_name):
     cf_client = boto3.client("cloudformation", config=ctx.obj["aws_conf"])
     cf_client.create_stack(
         StackName=stack_name,
         TemplateBody=open("scripts/remotedev.yml").read(), # FIXME
-        Parameters=env_meta.generate_parameter_args(),
+        Parameters=env_meta.generate_parameter_args(statemachine_file)
         OnFailure="DO_NOTHING",
         Tags=env_meta.generate_tag_args()
     )
