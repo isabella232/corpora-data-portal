@@ -17,6 +17,17 @@ from backend.corpora.common.utils.db_utils import DbUtils
 from backend.scripts.create_db import create_db
 from tests.unit.backend.corpora import CorporaTestCaseUsingMockAWS
 
+class TestDatabaseManager:
+    is_initialized = False
+
+    @classmethod
+    def initialize_db(cls):
+        if cls.is_initialized:
+            return
+        testdb = TestDatabase()
+        testdb.create_db()
+        testdb.populate_test_data()
+        cls.is_initialized = True
 
 class TestDatabase:
     fake_s3_file = f"s3://{CorporaTestCaseUsingMockAWS.CORPORA_TEST_CONFIG['bucket_name']}/test_s3_uri.h5ad"
