@@ -2,7 +2,6 @@ import itertools
 import json
 import sys
 import os
-import unittest
 from datetime import datetime
 
 from furl import furl
@@ -12,9 +11,10 @@ from backend.corpora.common.entities import Collection
 from tests.unit.backend.chalice.api_server import BaseAPITest
 from tests.unit.backend.utils import BogusCollectionParams
 from tests.unit.backend.chalice.api_server.mock_auth import MockOauthServer, get_auth_token
+from tests.data_portal_test_case import DataPortalTestCase
 
 
-class TestCollection(BaseAPITest, unittest.TestCase):
+class TestCollection(BaseAPITest, DataPortalTestCase):
     @classmethod
     def setUpClass(cls):
         BaseAPITest.setUpClass()

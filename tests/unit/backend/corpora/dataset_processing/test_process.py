@@ -23,9 +23,10 @@ from backend.corpora.common.entities.collection import Collection
 from backend.corpora.common.entities.dataset import Dataset
 
 from backend.corpora.dataset_processing import process
+from tests.data_portal_test_case import DataPortalTestCase
 
 
-class TestDatasetProcessing(unittest.TestCase):
+class TestDatasetProcessing(DataPortalTestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmp_dir = tempfile.mkdtemp()

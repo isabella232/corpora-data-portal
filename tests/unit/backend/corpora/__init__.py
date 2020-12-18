@@ -5,12 +5,14 @@ import boto3
 from moto import mock_s3
 
 from backend.corpora.common.corpora_config import CorporaConfig
+from tests.data_portal_test_case import DataPortalTestCase
 
 
-class CorporaTestCaseUsingMockAWS(unittest.TestCase):
+class CorporaTestCaseUsingMockAWS(DataPortalTestCase):
     CORPORA_TEST_CONFIG = {"bucket_name": "bogus-bucket"}
 
     def setUp(self):
+        super().setUp()
         # Setup configuration
         self.corpora_config = CorporaConfig()
         self.corpora_config.set(self.__class__.CORPORA_TEST_CONFIG)

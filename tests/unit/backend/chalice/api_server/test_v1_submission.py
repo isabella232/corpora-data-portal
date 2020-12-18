@@ -7,9 +7,10 @@ from backend.corpora.common.corpora_orm import CollectionVisibility
 from backend.corpora.common.entities import Collection
 from tests.unit.backend.chalice.api_server import BaseAPITest
 from tests.unit.backend.utils import BogusCollectionParams
+from tests.data_portal_test_case import DataPortalTestCase
 
 
-class TestSubmission(BaseAPITest, unittest.TestCase):
+class TestSubmission(BaseAPITest, DataPortalTestCase):
     def test__list_submission__ok(self):
         path = "/dp/v1/submission"
         headers = dict(host="localhost")

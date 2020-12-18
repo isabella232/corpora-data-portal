@@ -17,10 +17,12 @@ from backend.corpora.common.corpora_orm import (
 from backend.corpora.common.entities.dataset import Dataset
 from backend.corpora.common.utils.db_utils import DbUtils
 from tests.unit.backend.utils import BogusDatasetParams, BogusProcessingStatusParams
+from tests.data_portal_test_case import DataPortalTestCase
 
 
-class TestDataset(unittest.TestCase):
+class TestDataset(DataPortalTestCase):
     def setUp(self):
+        super().setUp()
         self.uuid = "test_dataset_id"
 
     def test__get__ok(self):

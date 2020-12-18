@@ -1,3 +1,5 @@
+import unittest
+
 from tests.unit.fixtures.test_db import TestDatabaseManager
 
 class DataPortalTestCase(unittest.TestCase):
