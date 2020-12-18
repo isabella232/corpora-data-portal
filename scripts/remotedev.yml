@@ -7,8 +7,11 @@ Parameters:
   Priority:
     Description: Listener rule priority number within the given listener
     Type: Number
-  StateMachineDefinition:
-    Description: State Machine Definition.
+  StateMachineBucket:
+    Description: State Machine Bucket.
+    Type: String
+  StateMachineKey:
+    Description: State Machine Key.
     Type: String
 
 Resources:
@@ -20,7 +23,8 @@ Resources:
         CustomStackName: !Ref AWS::StackName
         ImageTag: !Ref ImageTag
         Priority: !Ref Priority
-        StateMachineDefinition: !Ref StateMachineDefinition
+        StateMachineBucket: !Ref StateMachineBucket
+        StateMachineKey: !Ref StateMachineKey
 
 Outputs:
   FrontendUrl:

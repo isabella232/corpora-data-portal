@@ -96,7 +96,7 @@ class EnvMeta:
             })
         return args
 
-    def generate_parameter_args(self, statemachine_file):
+    def generate_parameter_args(self, statemachine_bucket, statemachine_key):
         args = []
         for k, v in self.parameter_map.items():
             args.append({
@@ -104,8 +104,12 @@ class EnvMeta:
                 "ParameterValue": str(self.meta[k]),
             })
         args.append({
-            "ParameterKey": "StateMachineLocation",
-            "ParameterValue": statemachine_file
+            "ParameterKey": "StateMachineKey",
+            "ParameterValue": statemachine_key
+        })
+        args.append({
+            "ParameterKey": "StateMachineBucket",
+            "ParameterValue": statemachine_bucket
         })
         return args
 
@@ -184,9 +188,10 @@ def cli(ctx, profile):
 def upload_statemachine(ctx, stack_name):
     s3_bucket = "sc-happy-corpora-dev"
     s3_client = boto3.resource("s3", config=ctx.obj["aws_conf"])
-    s3_key = f"/statemachineTmp/{stack_name}.json"
-    s3_client.Bucket(s3_bucket).upload_fileobj(open("scripts/remotedev.yml").read())
-    return f"s3://{s3_bucket}{s3_key}"
+    s3_key = f"statemachineTmp/{stack_name}.json"
+    s3_client.Bucket(s3_bucket).upload_file("scripts/upload_sfn_definition.json", s3_key)
+    print(f"{s3_bucket}/{s3_key}")
+    return s3_bucket, s3_key
 
 
 def get_secrets(ctx):
@@ -414,12 +419,12 @@ def create(ctx, stack_name, tag, wait):
     env_meta.update(tag, DevEnvMgr(ctx))
     print(f"creating {stack_name}")
 
-    statemachine_file = upload_statemachine(ctx, stack_name):
+    statemachine_bucket, statemachine_key = upload_statemachine(ctx, stack_name)
     cf_client = boto3.client("cloudformation", config=ctx.obj["aws_conf"])
     cf_client.create_stack(
         StackName=stack_name,
         TemplateBody=open("scripts/remotedev.yml").read(), # FIXME
-        Parameters=env_meta.generate_parameter_args(statemachine_file)
+        Parameters=env_meta.generate_parameter_args(statemachine_bucket, statemachine_key),
         OnFailure="DO_NOTHING",
         Tags=env_meta.generate_tag_args()
     )
